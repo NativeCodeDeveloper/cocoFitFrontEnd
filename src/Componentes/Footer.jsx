@@ -125,12 +125,12 @@ export default function Footer() {
               <li className="flex items-start gap-3 group">
                 <Mail className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                 <div>
-                  <a
-                    href="mailto:contacto@cocofit.cl"
+                  <Link
+                    href="/"
                     className="text-white/80 hover:text-emerald-400 font-light text-sm transition-colors duration-300 break-all"
                   >
                     contacto@cocofit.cl
-                  </a>
+                  </Link>
                 </div>
               </li>
               <li className="flex items-start gap-3 group">
@@ -180,7 +180,7 @@ export default function Footer() {
             <div className="flex flex-wrap items-center justify-center gap-4">
               <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg">
                 <Image
-                  src="/mercadopago.png"
+                  src="/mpblack.webp"
                   alt="Mercado Pago"
                   width={80}
                   height={30}
@@ -195,13 +195,9 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-white/40 font-light text-xs text-center md:text-left">
-              © {currentYear} COCOFIT. Todos los derechos reservados.
+              © {currentYear} NativeCode SpA. Todos los derechos reservados.
             </p>
-            <div className="flex items-center gap-4 text-white/40 font-light text-xs">
-              <span className="hidden sm:inline">Hecho con</span>
-              <span className="text-emerald-400">❤</span>
-              <span className="hidden sm:inline">para Marti by NativeCode - Software Engineering </span>
-            </div>
+
           </div>
         </div>
       </div>

@@ -88,7 +88,7 @@ export default function PortadaPage() {
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
               className="flex flex-col gap-4 sm:flex-row sm:gap-6"
             >
-              <Link href="/catalogo">
+              <Link href="/">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -101,7 +101,7 @@ export default function PortadaPage() {
                 </motion.button>
               </Link>
 
-              <Link href="/nosotros">
+              <Link href="/">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}

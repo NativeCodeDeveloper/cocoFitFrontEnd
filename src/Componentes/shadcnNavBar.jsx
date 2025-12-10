@@ -172,14 +172,14 @@ export function ShadcnNavBar() {
                     <div className="flex flex-col gap-2 py-4 border-t border-white/10">
 
                         {/* Número de teléfono móvil */}
-                        <a
-                            href="tel:+56995043704"
+                        <Link
+                            href="/"
                             className="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/5 border border-white/10 hover:border-emerald-400/30 hover:bg-white/10 transition-all duration-300 group"
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             <Phone className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
                             <span className="text-base font-light text-white tracking-wide">+56 9 9504 3704</span>
-                        </a>
+                        </Link>
 
                         {/* Inicio */}
                         <Link
@@ -192,7 +192,7 @@ export function ShadcnNavBar() {
 
                         {/* Catálogo Completo */}
                         <Link
-                            href="/catalogo"
+                            href="/"
                             className="px-4 py-3 rounded-lg text-base font-light text-white/90 hover:text-white hover:bg-white/5 transition-all duration-300 tracking-wide"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -204,7 +204,7 @@ export function ShadcnNavBar() {
                             <p className="text-xs font-light text-white/50 uppercase tracking-[0.2em] mb-3">Nuestros Servicios</p>
                             <div className="flex flex-col gap-2">
                                 <Link
-                                    href="/catalogo"
+                                    href="/"
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-400/30 transition-all duration-300 group"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
@@ -216,7 +216,7 @@ export function ShadcnNavBar() {
                                     </div>
                                 </Link>
                                 <Link
-                                    href="/formularioContacto"
+                                    href="/"
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-400/30 transition-all duration-300 group"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
@@ -228,7 +228,7 @@ export function ShadcnNavBar() {
                                     </div>
                                 </Link>
                                 <Link
-                                    href="/formularioContacto"
+                                    href="/"
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-400/30 transition-all duration-300 group"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
@@ -240,7 +240,7 @@ export function ShadcnNavBar() {
                                     </div>
                                 </Link>
                                 <Link
-                                    href="/formularioContacto"
+                                    href="/"
                                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-400/30 transition-all duration-300 group"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
@@ -256,7 +256,7 @@ export function ShadcnNavBar() {
 
                         {/* Contacto */}
                         <Link
-                            href="/formularioContacto"
+                            href="/"
                             className="px-4 py-3 rounded-lg text-base font-light text-white/90 hover:text-white hover:bg-white/5 transition-all duration-300 tracking-wide"
                             onClick={() => setMobileMenuOpen(false)}
                         >
@@ -265,7 +265,7 @@ export function ShadcnNavBar() {
 
                         {/* Sobre Nosotros */}
                         <Link
-                            href="/nosotros"
+                            href="/"
                             className="px-4 py-3 rounded-lg text-base font-light text-white/90 hover:text-white hover:bg-white/5 transition-all duration-300 tracking-wide"
                             onClick={() => setMobileMenuOpen(false)}
                         >

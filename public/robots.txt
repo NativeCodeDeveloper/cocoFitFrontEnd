@@ -1,0 +1,46 @@
+# robots.txt para COCOFIT - Ropa Deportiva Premium
+# Optimizado para máxima indexación en buscadores
+
+User-agent: *
+Allow: /
+Allow: /catalogo
+Allow: /productos
+Allow: /portada
+Allow: /nosotros
+Allow: /mision
+Allow: /formularioContacto
+
+# Bloquear áreas administrativas y de autenticación
+Disallow: /dashboard
+Disallow: /sign-in
+Disallow: /no-access
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin
+
+# Permitir crawling de recursos importantes
+Allow: /public/
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.webp
+Allow: /*.svg
+
+# Sitemap
+Sitemap: https://cocofit.cl/sitemap.xml
+
+# Configuración específica para Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Configuración específica para Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Configuración específica para Yahoo
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+

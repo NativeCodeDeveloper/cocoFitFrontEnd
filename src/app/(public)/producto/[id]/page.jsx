@@ -6,6 +6,9 @@ import {useCarritoGlobal} from "@/ContextosGlobales/CarritoContext";
 import {toast} from "react-hot-toast";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import CarruselProducto from "@/Componentes/CarruselProducto";
+
+
 
 
 export default function ProductoDetalle() {
@@ -14,6 +17,7 @@ export default function ProductoDetalle() {
     //USO DE CARRITO GLOBAL DE CONTEXT PARA EL USO EN TODA LA APLICACION DE ARRAY DE OBJETOS GLOBALES
     const [carrito, setCarrito] = useCarritoGlobal();
     const router = useRouter();
+
 
     function agregarAlCarrito(productoSeleccionado) {
        setCarrito(arrayProductosPrevios => [...arrayProductosPrevios, productoSeleccionado])
@@ -47,6 +51,8 @@ export default function ProductoDetalle() {
 
     // CONSTANTE API QUE APUNTA AL SERVIDOR BACKEND PARA CONECTAR CON LOS ENDPOINDS EN VIEWS
     const API = process.env.NEXT_PUBLIC_API_URL;
+    const CLOUDFLARE_HASH = process.env.NEXT_PUBLIC_CLOUDFLARE_HASH;
+    const VARIANT = 'full'
 
 
 
@@ -83,22 +89,30 @@ useEffect(() => {
         booleanSinStock = true;
     }
 
+
+
+
+
+
     return (
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 mt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="flex items-start justify-center bg-white/70 backdrop-blur rounded-2xl p-4 shadow-sm ring-1 ring-slate-200 relative">
-            {producto && (
-<Carrusel
-    key={producto.id_producto}
-    imagen1={producto.imagenProducto}
-    imagen2={producto.imagenProductoSegunda ?? producto.imagenProducto}
-    imagen3={producto.imagenProductoTercera ?? producto.imagenProducto}
-    imagen4={producto.imagenProductoCuarta ?? producto.imagenProducto}
-></Carrusel>
-            )}
+          <div className="flex items-start justify-center bg-white/70 backdrop-blur rounded-2xl p-4   relative">
+
+
+              <CarruselProducto
+                  imagen1={`https://imagedelivery.net/${CLOUDFLARE_HASH}/${producto.imagenProducto}/${VARIANT}`}
+                  imagen2={`https://imagedelivery.net/${CLOUDFLARE_HASH}/${producto.imagenProductoSegunda}/${VARIANT}`}
+                  imagen3={`https://imagedelivery.net/${CLOUDFLARE_HASH}/${producto.imagenProductoTercera}/${VARIANT}`}
+                  imagen4={`https://imagedelivery.net/${CLOUDFLARE_HASH}/${producto.imagenProductoCuarta}/${VARIANT}`}
+
+              />
+
+
           </div>
 
           <div className="space-y-6">
+
             {producto && (
               <>
                 {/* TÍTULO DEL PRODUCTO */}
@@ -222,6 +236,9 @@ useEffect(() => {
               </>
             )}
           </div>
+
+
+
         </div>
       </div>
     )

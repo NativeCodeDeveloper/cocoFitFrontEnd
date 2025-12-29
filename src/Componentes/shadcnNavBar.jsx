@@ -76,7 +76,7 @@ export function ShadcnNavBar() {
                                         className="no-underline flex h-full w-full select-none flex-col justify-end rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 outline-none hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-300"
                                         href="/">
                                         <div className="mb-2 mt-4 text-2xl font-bold text-white lowercase tracking-tight" style={{ fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em' }}>
-                                            cocofit
+                                            NeoFitness
                                         </div>
                                         <p className="text-sm font-light leading-tight text-white/90">
                                             Ropa deportiva femenina de alto rendimiento. Estilo y poder.

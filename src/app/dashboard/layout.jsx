@@ -1,5 +1,4 @@
-// app/dashboard/layout.jsx
-import NavbarDashboard from "@/Componentes/NavbarDashboard";
+import NavbarDashboardClient from "./NavbarDashboardClient";
 
 export const metadata = {
     title: "Dashboard",
@@ -9,7 +8,7 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
     return (
         <section>
-            <NavbarDashboard />
+            <NavbarDashboardClient />
             <main>{children}</main>
         </section>
     );

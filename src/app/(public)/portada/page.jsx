@@ -51,14 +51,14 @@ export default function PortadaPage() {
               className="mb-12"
             >
               <h1
-                className="font-black text-[6rem] text-white sm:text-[8rem] md:text-[11rem] lg:text-[15rem] xl:text-[18rem] lowercase tracking-tighter leading-[0.8]"
+                className="font-black text-5xl md:text-9xl text-white  tracking-tighter leading-[0.8]"
                 style={{
                   fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
                   letterSpacing: '-0.05em',
                   fontWeight: '900'
                 }}
               >
-                cocofit
+                NeoFitness
               </h1>
             </motion.div>
 
@@ -122,9 +122,9 @@ export default function PortadaPage() {
               className="mt-20 flex flex-wrap gap-12 border-t border-white/10 pt-12"
             >
               {[
-                { value: "95%", label: "Satisfacción" },
-                { value: "100%", label: "Sustentable" },
-                { value: "24/7", label: "Soporte" }
+                { value: "100%", label: "Comodidad" },
+                { value: "100%", label: "Original" },
+                { value: "100%", label: "Mujeres" }
               ].map((stat, index) => (
                 <motion.div
                   key={index}

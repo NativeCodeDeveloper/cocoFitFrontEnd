@@ -303,7 +303,7 @@ function CatalogoInner() {
                     {/* Título principal deportivo y moderno */}
                     <div className="text-center mb-8">
                         <h1 className="text-4xl md:text-6xl font-bold lowercase tracking-tight text-black mb-4" style={{fontFamily: 'system-ui, -apple-system, sans-serif', letterSpacing: '-0.02em'}}>
-                            colección cocofit
+                            Colección NeoFitness
                         </h1>
                         <div className="flex justify-center mb-4">
                             <div className="h-px w-32 bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
@@ -390,7 +390,7 @@ function CatalogoInner() {
                             .map(publicacion => (
                                 <div key={publicacion.id_publicaciones} className="rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm hover:shadow-lg hover:shadow-emerald-400/20 hover:border-emerald-400 transition-all duration-300">
                                     <img
-                                        src={publicacion.imagenPublicaciones_primera}
+                                        src={`https://imagedelivery.net/aCBUhLfqUcxA2yhIBn1fNQ/${publicacion.imagenPublicaciones_primera}/card`}
                                         className="w-full aspect-[3/4] object-cover"
                                         alt="Publicación"
                                     />
@@ -444,8 +444,9 @@ function CatalogoInner() {
                                                         className="no-underline hover:no-underline inline-block focus:outline-none focus:ring-0 mb-3 overflow-hidden rounded-lg"
                                                         style={{ textDecoration: 'none', WebkitTextDecoration: 'none' }}
                                                     >
+
                                                         <MediaCardImage
-                                                            imagenProducto={producto.imagenProducto}
+                                                            imagenProducto={`https://imagedelivery.net/aCBUhLfqUcxA2yhIBn1fNQ/${producto.imagenProducto}/card`}
                                                             className="no-underline hover:no-underline transition-transform duration-300 hover:scale-105"
                                                         />
                                                     </Link>

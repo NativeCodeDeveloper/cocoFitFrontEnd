@@ -21,9 +21,6 @@ export default function Publicaciones() {
 
     // API INTERNA PARA HACER LOS FETH DIRECTO AL BACKEND NO USAR http://localhost:3001 PORQUE COMPLICA EL DESPLIEGUE EN LA NUBE
     const API = process.env.NEXT_PUBLIC_API_URL;
-    const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUD_NAME;
-    const UPLOAD_PRESET = process.env.NEXT_PUBLIC_UPLOAD_PRESET;
-
     // Límite de tamaño de Cloudinary (plan gratuito) ≈ 10 MB
     const MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
 
@@ -253,14 +250,24 @@ export default function Publicaciones() {
         }
     }
 
+    // Tipos MIME permitidos por Cloudflare Images
+    const ALLOWED_IMAGE_TYPES = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+      "image/svg+xml"
+    ];
+
     async function handleInsertSubmit(e){
         e.preventDefault();
         if (!newDescripcion || !newFile){
             toast.error('Descripción e imagen son obligatorios para insertar');
             return;
         }
-        if (!CLOUD_NAME || !UPLOAD_PRESET){
-            toast.error('Faltan variables de entorno de Cloudinary');
+        // Validar tipo MIME antes de subir
+        if (!ALLOWED_IMAGE_TYPES.includes(newFile.type)) {
+            toast.error('El archivo debe ser una imagen JPG, PNG, WEBP, GIF o SVG');
             return;
         }
         setIsInserting(true);
@@ -270,30 +277,41 @@ export default function Publicaciones() {
                 const compressed = await downscaleImage(toUpload, 1600, 1600, 0.82);
                 if (compressed) toUpload = new File([compressed], (newFile.name || 'image') + '.jpg', {type: 'image/jpeg'});
             }
+            // Validar tipo MIME tras compresión
+            if (!ALLOWED_IMAGE_TYPES.includes(toUpload.type)) {
+                toast.error('El archivo comprimido no es un tipo de imagen válido para Cloudflare');
+                setIsInserting(false);
+                return;
+            }
             if (toUpload.size > MAX_UPLOAD_SIZE){
                 toast.error('La imagen excede 10MB incluso tras compresión');
                 setIsInserting(false);
                 return;
             }
             const formData = new FormData();
-            formData.append('file', toUpload);
-            formData.append('upload_preset', UPLOAD_PRESET);
-
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
-                method: 'POST',
-                body: formData
+            formData.append('image', toUpload); // el backend espera 'image'
+            const res = await fetch(`${API}/cloudflare/subirimagenes`, {
+                method: "POST",
+                body: formData,
             });
             if (!res.ok){
                 const errText = await res.text();
-                console.error('Error subiendo nueva imagen a Cloudinary:', res.status, errText);
-                toast.error('Error subiendo imagen a Cloudinary');
+                console.error('Error subiendo nueva imagen a Cloudflare:', res.status, errText);
+                toast.error('Error subiendo imagen a Cloudflare');
                 setIsInserting(false);
                 return;
             }
+
             const data = await res.json();
-            const imageUrl = data.secure_url;
+            if (!data.ok || !data.imageId) {
+                toast.error('Error al subir imagen a Cloudflare');
+                setIsInserting(false);
+                return;
+            }
+
+            const imageId = data.imageId;
             // Llamar a insertarPublicacion (usa la función existente)
-            await insertarPublicacion(newDescripcion, imageUrl, "", "");
+            await insertarPublicacion(newDescripcion, imageId, "", "");
             await listarPublicaciones();
             setNewDescripcion("");
             setNewFile(null);
@@ -314,6 +332,24 @@ export default function Publicaciones() {
      useEffect(() => {
          listarPublicaciones();
      }, []);
+
+
+
+
+    //LLAMADA A HASH DE CLOUDFLARE
+    const CLOUDFLARE_HASH = process.env.NEXT_PUBLIC_CLOUDFLARE_HASH;
+    const VARIANT_CARD = 'card';
+    const VARIANT_FULL = 'full';
+    const VARIANT_MINI = 'mini';
+
+    // Utilidad para construir la URL de entrega de Cloudflare
+    function cfToSrc(imageId, variant = VARIANT_FULL) {
+      if (!imageId) return "";
+      // Si ya es una URL completa (por compatibilidad), la retorna tal cual
+      if (imageId.startsWith("http")) return imageId;
+      return `https://imagedelivery.net/${CLOUDFLARE_HASH}/${imageId}/${variant}`;
+    }
+
 
 
     return (
@@ -352,19 +388,17 @@ export default function Publicaciones() {
                       toast.error("Selecciona al menos una imagen");
                       return;
                     }
-                    if (!CLOUD_NAME || !UPLOAD_PRESET) {
-                      setIsUploading(false);
-                      console.error("Faltan variables de entorno para Cloudinary", {
-                        CLOUD_NAME: CLOUD_NAME || "NO DEFINIDO",
-                        UPLOAD_PRESET: UPLOAD_PRESET || "NO DEFINIDO",
-                      });
-                      toast.error("No se puede subir la imagen: faltan variables de entorno (CLOUD_NAME o UPLOAD_PRESET).");
-                      return;
+                    // Validar tipos MIME antes de subir
+                    for (const f of file) {
+                      if (!ALLOWED_IMAGE_TYPES.includes(f.type)) {
+                        setIsUploading(false);
+                        toast.error('Solo se permiten imágenes JPG, PNG, WEBP, GIF o SVG');
+                        return;
+                      }
                     }
-                    const uploadedUrls = [];
+                    const uploadedIds = [];
                     for (const f of file) {
                       let toUpload = f;
-
                       if (toUpload.size > MAX_UPLOAD_SIZE) {
                         console.warn("Imagen supera 10MB, intentando comprimir...", {
                           nombre: toUpload.name,
@@ -373,41 +407,45 @@ export default function Publicaciones() {
                         const compressed = await downscaleImage(toUpload, 1600, 1600, 0.82);
                         if (compressed && compressed.size < toUpload.size) {
                           toUpload = new File([compressed], (f.name || "image") + ".jpg", { type: "image/jpeg" });
-                          console.info("Imagen comprimida", {
-                            nuevaSizeMB: (toUpload.size / (1024*1024)).toFixed(2)
-                          });
                         }
                       }
-
+                      // Validar tipo MIME tras compresión
+                      if (!ALLOWED_IMAGE_TYPES.includes(toUpload.type)) {
+                        setIsUploading(false);
+                        toast.error('El archivo comprimido no es un tipo de imagen válido para Cloudflare');
+                        return;
+                      }
                       if (toUpload.size > MAX_UPLOAD_SIZE) {
                         setIsUploading(false);
                         toast.error("La imagen excede 10 MB incluso tras compresión. Por favor, súbela con menor resolución o peso.");
                         return;
                       }
-
                       const formData = new FormData();
-                      formData.append("file", toUpload);
-                      formData.append("upload_preset", UPLOAD_PRESET);
-
-                      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+                      formData.append("image", toUpload);
+                      const res = await fetch(`${API}/cloudflare/subirimagenes`, {
                         method: "POST",
                         body: formData,
                       });
                       if (!res.ok) {
                         setIsUploading(false);
                         const errText = await res.text();
-                        console.error("Error subiendo una imagen a Cloudinary:", res.status, errText);
-                        toast.error("Error subiendo una imagen. Revisa en Cloudinary que el UPLOAD_PRESET sea 'unsigned' y que el CLOUD_NAME sea correcto.");
+                        console.error("Error subiendo una imagen a Cloudflare:", res.status, errText);
+                        toast.error("Error subiendo una imagen a Cloudflare.");
                         return;
                       }
                       const data = await res.json();
-                      uploadedUrls.push(data.secure_url);
+                      if (!data.ok || !data.imageId) {
+                        setIsUploading(false);
+                        toast.error("Error al subir imagen a Cloudflare");
+                        return;
+                      }
+                      uploadedIds.push(data.imageId);
                     }
                     await actuzalizarPublicaciones(
                       descripcionPublicaciones,
-                      uploadedUrls[0] || "",
-                      uploadedUrls[1] || "",
-                      uploadedUrls[2] || "",
+                      uploadedIds[0] || "",
+                      uploadedIds[1] || "",
+                      uploadedIds[2] || "",
                       id_publicaciones
                     );
                     await listarPublicaciones();
@@ -510,21 +548,21 @@ export default function Publicaciones() {
                       <div className="grid grid-cols-3 gap-2 p-4 pt-0">
                         <div className="aspect-square overflow-hidden rounded-lg bg-gray-50">
                           {publicaciones.imagenPublicaciones_primera ? (
-                            <img src={publicaciones.imagenPublicaciones_primera} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                            <img src={cfToSrc(publicaciones.imagenPublicaciones_primera, VARIANT_FULL)} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-gray-300">No image</div>
                           )}
                         </div>
                         <div className="aspect-square overflow-hidden rounded-lg bg-gray-50">
                           {publicaciones.imagenPublicaciones_segunda ? (
-                            <img src={publicaciones.imagenPublicaciones_segunda} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                            <img src={cfToSrc(publicaciones.imagenPublicaciones_segunda, VARIANT_FULL)} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-gray-300">No image</div>
                           )}
                         </div>
                         <div className="aspect-square overflow-hidden rounded-lg bg-gray-50">
                           {publicaciones.imagenPublicaciones_tercera ? (
-                            <img src={publicaciones.imagenPublicaciones_tercera} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                            <img src={cfToSrc(publicaciones.imagenPublicaciones_tercera, VARIANT_FULL)} alt="" className="h-full w-full object-cover transition-transform group-hover:scale-105" />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-gray-300">No image</div>
                           )}
@@ -557,3 +595,4 @@ export default function Publicaciones() {
 
 
 }
+

@@ -11,6 +11,16 @@ export default function GestionStock() {
     const [nuevoStock, setNuevoStock] = useState({});
     const [productoSimilar, setProductoSimilar] = useState("");
 
+    const CLOUDFLARE_HASH = process.env.NEXT_PUBLIC_CLOUDFLARE_HASH;
+    const VARIANT_CARD = 'card';
+    const VARIANT_FULL='full';
+    const VARIANT_MINI = 'mini';
+
+
+    function cfToSrc(imageId) {
+        if (!imageId) return "";
+        return `https://imagedelivery.net/${CLOUDFLARE_HASH}/${imageId}/${VARIANT_MINI}`;
+    }
 
     async function buscarProductoSimilar(productoSimilar){
         let tituloProducto = productoSimilar;
@@ -169,7 +179,7 @@ export default function GestionStock() {
                 className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm hover:shadow-md transition"
               >
 
-                  <img src={producto.imagenProducto} alt="Producto" className="rounded-2xl h-25 w-25 hidden md:block" />
+                  <img src={cfToSrc(producto.imagenProducto,)} alt="Producto" className="rounded-2xl h-25 w-25 hidden md:block" />
 
 
                   <div className="flex flex-col">

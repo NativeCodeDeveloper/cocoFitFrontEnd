@@ -18,15 +18,24 @@ export default function CarruselProducto({ imagenes, imagen1, imagen2, imagen3, 
 
     const [actual, setActual] = useState(0);
 
-    // Guardamos solo imágenes que realmente cargan (evita miniaturas con ícono de error / "?")
-    const [imagenesOk, setImagenesOk] = useState(imagenesFinal);
+    // No renderizamos nada hasta validar; así evitamos íconos de imagen rota / "?".
+    const [cargando, setCargando] = useState(true);
+    const [imagenesOk, setImagenesOk] = useState([]);
 
     useEffect(() => {
       let cancelado = false;
 
+      // Reinicia estado al cambiar el set de imágenes
+      setCargando(true);
+      setImagenesOk([]);
+      setActual(0);
+
       async function validar() {
         if (!imagenesFinal.length) {
-          if (!cancelado) setImagenesOk([]);
+          if (!cancelado) {
+            setImagenesOk([]);
+            setCargando(false);
+          }
           return;
         }
 
@@ -45,6 +54,7 @@ export default function CarruselProducto({ imagenes, imagen1, imagen2, imagen3, 
         const ok = resultados.filter((r) => r.ok).map((r) => r.src);
         if (!cancelado) {
           setImagenesOk(ok);
+          setCargando(false);
           // Si el índice actual queda fuera de rango, lo ajustamos
           if (ok.length > 0 && actual >= ok.length) {
             setActual(0);
@@ -69,8 +79,8 @@ export default function CarruselProducto({ imagenes, imagen1, imagen2, imagen3, 
       setActual((prev) => (prev - 1 + imagenesOk.length) % imagenesOk.length);
     };
 
-    // Si no hay imágenes, no renderizamos el carrusel
-    if (!imagenesOk.length) return null;
+    // Esperamos validación; si no hay imágenes válidas, no renderizamos
+    if (cargando || !imagenesOk.length) return null;
 
     // Solo mostrar miniaturas disponibles
     const thumbs = imagenesOk;
@@ -100,6 +110,15 @@ export default function CarruselProducto({ imagenes, imagen1, imagen2, imagen3, 
                                         src={img}
                                         alt={`Miniatura ${i + 1}`}
                                         className="h-16 w-16 md:h-20 md:w-20 object-contain rounded-lg"
+                                        onError={() => {
+                                          setImagenesOk((prev) => {
+                                            const next = prev.filter((s) => s !== img);
+                                            // Ajusta índice si quedara fuera
+                                            if (next.length === 0) return next;
+                                            if (actual >= next.length) setActual(0);
+                                            return next;
+                                          });
+                                        }}
                                     />
                                 </div>
                             </button>
@@ -115,7 +134,15 @@ export default function CarruselProducto({ imagenes, imagen1, imagen2, imagen3, 
                         src={imagenesOk[actual]}
                         alt={`Imagen principal ${actual + 1}`}
                         className="h-[80vw] max-h-[90vw] w-full object-contain md:h-full md:max-h-none"
-                        style={{minHeight: '220px'}} // asegura buen tamaño en móviles
+                        style={{ minHeight: "220px" }} // asegura buen tamaño en móviles
+                        onError={() => {
+                          const srcFallida = imagenesOk[actual];
+                          setImagenesOk((prev) => {
+                            const next = prev.filter((s) => s !== srcFallida);
+                            return next;
+                          });
+                          setActual(0);
+                        }}
                     />
 
                     {/* Flecha izquierda */}

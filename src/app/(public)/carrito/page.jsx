@@ -211,6 +211,7 @@ export default function Carrito() {
                 <div className="md:hidden mt-6 space-y-4">
                     {isMounted && productosDelCarrito.map((producto) => (
                         <div key={producto.id_producto} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 flex items-start gap-4 hover:border-emerald-200 transition-colors">
+
                             <img src={producto.imagenProducto} alt={producto.tituloProducto} className="w-20 h-20 object-cover rounded-lg shadow-sm flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start">
